@@ -1,0 +1,245 @@
+# Requires: Git, gh (GitHub CLI)
+# Run as Administrator if needed, and allow script execution: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+param(
+    [string]$Owner = "Rillis61",
+    [string]$RepoName = "BeamNG-410WingSprintA",
+    [string]$ReleaseTag = "v0.1",
+    [string]$PackageName = "410WingSprintA_Starter_Steam_WithWingToggle.zip"
+)
+
+$ErrorActionPreference = "Stop"
+
+# 1) Create local structure
+$base = "410WingSprintA_Starter_Steam_WithWingToggle"
+$paths = @(
+    "Vehicle",
+    "Vehicle\410WingSprintConfig.json",
+    "Vehicle\410WingSprintChassis.jbeam",
+    "Vehicle\410WingSprintEngine_305.jbeam",
+    "Vehicle\410WingSprintEngine_360.jbeam",
+    "Vehicle\410WingSprintEngine_410.jbeam",
+    "Vehicle\410WingSprintShell.jbeam",
+    "Vehicle\410WingSprintTransmission.jbeam",
+    "Vehicle\410WingSprintAero.jbeam",
+    "Vehicle\410WingSprintWheels.jbeam",
+    "Vehicle\410WingSprintTires.json",
+    "Vehicle\410WingSprintInterior.jbeam",
+    "Meshes\410WingSprintChassis.mesh",
+    "Textures\Base\410WingSprint_Base.png",
+    "Textures\Wing\410WingSprint_Wing.png",
+    "Textures\Numbers\410WingSprint_Numbers.png",
+    "Textures\RollCage\rollcageWhite.png",
+    "Sounds\305\start.wav",
+    "Sounds\305\idle.wav",
+    "Sounds\305\rev.wav",
+    "Sounds\360\start.wav",
+    "Sounds\360\idle.wav",
+    "Sounds\360\rev.wav",
+    "Sounds\410\start.wav",
+    "Sounds\410\idle.wav",
+    "Sounds\410\rev.wav",
+    "UI\fonts\italic_motorsport.ttf",
+    "Docs\installation_guide.txt",
+    "Docs\customization_notes.txt",
+    "README.md",
+    "LICENSE"
+)
+
+# Create folders
+foreach ($p in $paths) {
+    $dir = Split-Path $p -Parent
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+}
+# Create placeholder files (only if not exists)
+$placeholderFiles = @{
+    "Vehicle\410WingSprintConfig.json" = @"
+{
+  "name": "410WingSprintA",
+  "version": "0.1",
+  "variants": [
+    {"name": "305V8", "engine": "410WingSprintEngine_305.jbeam"},
+    {"name": "360V8", "engine": "410WingSprintEngine_360.jbeam"},
+    {"name": "410V8", "engine": "410WingSprintEngine_410.jbeam"},
+    {"name": "Shell", "engine": "410WingSprintShell.jbeam"}
+  ],
+  "wingEnabled": true,
+  "wingToggleKey": "toggleWings",
+  "displayName": "410 Wing Sprint A",
+  "liveries": ["Livery_A", "Livery_B"],
+  "defaultLivery": "Livery_A"
+}
+"@
+    "Vehicle\410WingSprintChassis.jbeam" = @"
+{
+  "name": "410WingSprintChassis",
+  "mesh": "meshes/410WingSprintChassis.mesh",
+  "mass": 1350,
+  "centerOfMassOffset": "0 0.12 0.0",
+  "inertiaScale": 1.0,
+  "nodes": {},
+  "beams": {},
+  "limits": {}
+}
+"@
+    "Vehicle\410WingSprintEngine_305.jbeam" = @"
+{
+  "name": "305V8Engine",
+  "type": "V8",
+  "displacement": 305,
+  "maxRPM": 6800,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 350],
+    [2500, 520],
+    [5000, 640],
+    [6800, 600]
+  ],
+  "gears": [
+    {""ratio"": 3.1},
+    {""ratio"": 2.0},
+    {""ratio"": 1.5},
+    {""ratio"": 1.0},
+    {""ratio"": 0.8}
+  ],
+  ""finalDrive"": 3.2
+}
+"@
+    "Vehicle\410WingSprintEngine_360.jbeam" = @"
+{
+  "name": "360V8Engine",
+  "type": "V8",
+  "displacement": 360,
+  "maxRPM": 7000,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 420],
+    [2500, 590],
+    [5000, 700],
+    [7000, 680]
+  ],
+  ""gears"": [
+    {""ratio"": 3.1},
+    {""ratio"": 2.0},
+    {""ratio"": 1.5},
+    {""ratio"": 1.0},
+    {""ratio"": 0.85}
+  ],
+  ""finalDrive"": 3.15
+}
+"@
+    "Vehicle\410WingSprintEngine_410.jbeam" = @"
+{
+  "name": "410V8Engine",
+  "type": "V8",
+  "displacement": 410,
+  "maxRPM": 7500,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 480],
+    [2500, 650],
+    [5000, 800],
+    [7000, 780]
+  ],
+  ""gears"": [
+    {""ratio"": 3.0},
+    {""ratio"": 2.0},
+    {""ratio"": 1.4},
+    {""ratio"": 1.0},
+    {""ratio"": 0.85}
+  ],
+  ""finalDrive"": 3.2
+}
+"@
+    "Vehicle\410WingSprintShell.jbeam" = @"
+{
+  "name": "NoEngineShell",
+  "type": "Shell"
+}
+"@
+    "Vehicle\410WingSprintTransmission.jbeam" = @"
+{
+  "name": "4SpeedManual",
+  "gearRatios": [3.1, 2.0, 1.5, 1.0],
+  "finalDrive": 3.2
+}
+"@
+    "Vehicle\410WingSprintAero.jbeam" = @"
+{
+  "name": "RearWing",
+  "type": "Wing",
+  "area": 1.8,
+  "dragCoeff": 0.22,
+  "downforceCurve": [
+    [40, 0],
+    [100, 550],
+    [180, 900]
+  ],
+  "pitchControl": {
+    "enabled": true,
+    "input": "wingPitch",
+    "minAngle": 0,
+    "maxAngle": 28
+  }
+}
+"@
+    "Textures\Base\410WingSprint_Base.png" = ""
+    "Textures/Wing\410WingSprint_Wing.png" = ""
+    "Textures/Numbers\410WingSprint_Numbers.png" = ""
+    "Textures/RollCage\rollcageWhite.png" = ""
+    "Sounds/305/start.wav" = ""
+    "Sounds/305/idle.wav" = ""
+    "Sounds/305/rev.wav" = ""
+    "Sounds/360/start.wav" = ""
+    "Sounds/360/idle.wav" = ""
+    "Sounds/360/rev.wav" = ""
+    "Sounds/410/start.wav" = ""
+    "Sounds/410/idle.wav" = ""
+    "Sounds/410/rev.wav" = ""
+    "UI/fonts/italic_motorsport.ttf" = ""
+    "Docs/installation_guide.txt" = "Steam installation guide placeholder. Replace with real steps."
+    "Docs/customization_notes.txt" = "Notes for future customization."
+    "README.md" = "# 410 Wing Sprint A\nPlaceholder README for local packaging."
+}
+
+foreach ($k in $placeholderFiles.Keys) {
+    if (-not (Test-Path $k)) {
+        New-Item -ItemType File -Path $k -Force | Out-Null
+    }
+    $content = $placeholderFiles[$k]
+    if ($content -is [string] -and $content.Trim().StartsWith("{")) {
+        Set-Content -Path $k -Value $content -Encoding UTF8
+    } elseif ($content -like "TEXT*") {
+        Set-Content -Path $k -Value $content -Encoding UTF8
+    } else {
+        # For binary-like placeholders, just write a small text note
+        Set-Content -Path $k -Value "PLACEHOLDER" -Encoding ASCII
+    }
+}
+# 2) Zip the folder
+<# Create the ZIP from the current directory; ensure the folder exists in the working dir.
+   If you run this script from outside the target parent, adjust paths accordingly. #>
+$zipPath = "$PSScriptRoot\..\" + $PackageName
+if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
+# Create ZIP of the folder named 410WingSprintA_Starter_Steam_WithWingToggle
+$rootDir = "$PSScriptRoot\410WingSprintA_Starter_Steam_WithWingToggle"
+if (Test-Path $rootDir) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($rootDir, $zipPath)
+} else {
+    Write-Error "Expected folder $rootDir does not exist. Create it and run again."
+}
+
+# 3) GitHub steps (optional, requires gh and authentication)
+Write-Host "`nGitHub steps (optional):"
+Write-Host "1) Create repo (if not already): gh repo create $Owner/$RepoName --public --description 'sprint car' --source=. --remote=origin"
+Write-Host "2) Add remote and push main:"
+Write-Host "   git init"
+Write-Host "   git add ."
+Write-Host "   git commit -m 'Initial v0.1 starter content for BeamNG sprint car (Option A local pack)'"
+Write-Host "   git branch -M main"
+Write-Host "   git remote add origin https://github.com/$Owner/$RepoName.git"
+Write-Host "   git push -u origin main"
+Write-Host "3) Create release and attach ZIP: gh release create v0.1 main --title 'Initial v0.1' --notes 'Four variants, wing toggle, two liveries, placeholders' && gh release upload v0.1 $PackageName"
+
+Write-Host "`nDone. The ZIP is saved at: $zipPath"
