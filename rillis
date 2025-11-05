@@ -1,0 +1,121 @@
+{
+  "name": "410WingSprintA",
+  "version": "0.1",
+  "variants": [
+    {"name": "305V8", "engine": "410WingSprintEngine_305.jbeam"},
+    {"name": "360V8", "engine": "410WingSprintEngine_360.jbeam"},
+    {"name": "410V8", "engine": "410WingSprintEngine_410.jbeam"},
+    {"name": "Shell", "engine": "410WingSprintShell.jbeam"}
+  ],
+  "wingEnabled": true,
+  "wingToggleKey": "toggleWings",
+  "displayName": "410 Wing Sprint A",
+  "liveries": ["Livery_A", "Livery_B"],
+  "defaultLivery": "Livery_A"
+}
+
+{
+  "name": "410WingSprintChassis",
+  "mesh": "meshes/410WingSprintChassis.mesh",
+  "mass": 1350,
+  "centerOfMassOffset": "0 0.12 0.0",
+  "inertiaScale": 1.0,
+  "nodes": {},
+  "beams": {},
+  "limits": {}
+}
+
+{
+  "name": "305V8Engine",
+  "type": "V8",
+  "displacement": 305,
+  "maxRPM": 6800,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 350],
+    [2500, 520],
+    [5000, 640],
+    [6800, 600]
+  ],
+  "gears": [
+    {"ratio": 3.1},
+    {"ratio": 2.0},
+    {"ratio": 1.5},
+    {"ratio": 1.0},
+    {"ratio": 0.8}
+  ],
+  "finalDrive": 3.2
+}
+
+{
+  "name": "360V8Engine",
+  "type": "V8",
+  "displacement": 360,
+  "maxRPM": 7000,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 420],
+    [2500, 590],
+    [5000, 700],
+    [7000, 680]
+  ],
+  "gears": [
+    {"ratio": 3.1},
+    {"ratio": 2.0},
+    {"ratio": 1.5},
+    {"ratio": 1.0},
+    {"ratio": 0.85}
+  ],
+  "finalDrive": 3.15
+}
+
+{
+  "name": "410V8Engine",
+  "type": "V8",
+  "displacement": 410,
+  "maxRPM": 7500,
+  "idleRPM": 900,
+  "torqueCurve": [
+    [1000, 480],
+    [2500, 650],
+    [5000, 800],
+    [7000, 780]
+  ],
+  "gears": [
+    {"ratio": 3.0},
+    {"ratio": 2.0},
+    {"ratio": 1.4},
+    {"ratio": 1.0},
+    {"ratio": 0.85}
+  ],
+  "finalDrive": 3.2
+}
+
+{
+  "name": "NoEngineShell",
+  "type": "Shell"
+}
+
+{
+  "name": "4SpeedManual",
+  "gearRatios": [3.1, 2.0, 1.5, 1.0],
+  "finalDrive": 3.2
+}
+
+{
+  "name": "RearWing",
+  "type": "Wing",
+  "area": 1.8,
+  "dragCoeff": 0.22,
+  "downforceCurve": [
+    [40, 0],
+    [100, 550],
+    [180, 900]
+  ],
+  "pitchControl": {
+    "enabled": true,
+    "input": "wingPitch",
+    "minAngle": 0,
+    "maxAngle": 28
+  }
+}
